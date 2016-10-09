@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -14,9 +16,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import com.mrwang.stacklibrary.RootActivity;
+import com.mrwang.stacklibrary.RootFragment;
 import com.unity3d.player.UnityPlayer;
 
-public class UnityPlayerActivity extends AppCompatActivity {
+public class UnityPlayerActivity extends RootActivity {
 
   public static final int FLAG_UNITY = 1;
   public static final int FLAG_MENU = 2;
@@ -26,7 +30,7 @@ public class UnityPlayerActivity extends AppCompatActivity {
   protected UnityPlayer mUnityPlayer;
   // don't change the name of this variable; referenced from native code
   private Fragment isFragment;
-  private MainFragment mainFragment;
+  private RootFragment mainFragment;
   private static final String TAG = "UnityPlayerActivity";
 
   public static Intent getStartIntent(Context ctx, int flag) {
@@ -68,17 +72,22 @@ public class UnityPlayerActivity extends AppCompatActivity {
           WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
     isFragment = new UnityPlayerFragment();
-    mainFragment = new MainFragment();
+    //mainFragment = new MainFragment();
     FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
     //transaction.addToBackStack("Unity");
-    transaction.replace(R.id.framLayoutId, isFragment, UnityPlayerFragment.class.getName())
-        .replace(R.id.content, mainFragment, MainFragment.class.getName())
-        .hide(mainFragment)
+    transaction.replace(R.id.unity, isFragment, UnityPlayerFragment.class.getName())
+        //.replace(R.id.framLayoutId, mainFragment, MainFragment.class.getName())
+        //.hide(mainFragment)
         .commit();
 
     //mUnityPlayer = new UnityPlayer(this);
     //setContentView(mUnityPlayer);
     //mUnityPlayer.requestFocus();
+  }
+
+  @NonNull @Override protected RootFragment getRootFragment() {
+    mainFragment = new MainFragment();
+    return mainFragment;
   }
 
   public UnityPlayer GetUnityPlayer() {
@@ -147,7 +156,17 @@ public class UnityPlayerActivity extends AppCompatActivity {
 
     switch (keyCode) {
       case KeyEvent.KEYCODE_BACK:
-        return super.onKeyDown(keyCode, event);
+
+        if (!mainFragment.isVisible()) {
+          FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+          transaction.hide(isFragment).show(mainFragment).commit();
+          return true;
+        } else {
+          mainFragment = (RootFragment) manager.onBackPressed();
+          return true;
+        }
+
+        //return super.onKeyDown(keyCode, event);
     }
 
     return mUnityPlayer.injectEvent(event);
@@ -165,9 +184,11 @@ public class UnityPlayerActivity extends AppCompatActivity {
   public void initUnityFinish(final String str) {
 
     //switchContent(isFragment, new MainFragment());
-
-    FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-    transaction.hide(isFragment).show(mainFragment).commit();
+    //
+    //FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+    //transaction.hide(isFragment).commit();
+    //
+    //manager.setFragment(getRootFragment());
 
     mUnityPlayer.post(new Runnable() {
       @Override public void run() {
@@ -175,6 +196,26 @@ public class UnityPlayerActivity extends AppCompatActivity {
             UnityPlayerFragment.class.getName())).initUnityFinish(str);
       }
     });
+
+    FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+    transaction.hide(isFragment).commit();
+
+    manager.setFragment(getRootFragment());
+  }
+
+  public void switchUnity() {
+
+    if (isFragment.isVisible()) {
+      FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+      transaction.hide(mainFragment).show(isFragment).commit();
+    } else {
+      FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+      transaction.hide(mainFragment).show(isFragment).commit();
+    }
+  }
+
+  public void setMainFragment(RootFragment fragment) {
+    this.mainFragment = fragment;
   }
 
   public void openDrawerLayout(String str) {

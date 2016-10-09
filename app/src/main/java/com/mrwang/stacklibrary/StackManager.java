@@ -1,4 +1,4 @@
-package stacklibrary;
+package com.mrwang.stacklibrary;
 
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
@@ -237,7 +237,7 @@ public class StackManager implements CloseFragment {
     }
   }
 
-  public void onBackPressed() {
+  public Fragment onBackPressed() {
     Fragment[] last = stack.getLast();
     final Fragment from = last[0];
     Fragment to = last[1];
@@ -278,6 +278,8 @@ public class StackManager implements CloseFragment {
       closeAllFragment();
       context.finish();
     }
+
+    return to;
   }
 
   public static boolean isFirstClose = true;
@@ -323,9 +325,5 @@ public class StackManager implements CloseFragment {
   @IntDef({ STANDARD, SINGLE_TOP, SINGLE_TASK, SINGLE_INSTANCE, KEEP_CURRENT })
   public @interface StackMode {
 
-  }
-
-  public FragmentStack getStack() {
-    return stack;
   }
 }

@@ -1,6 +1,7 @@
-package stacklibrary;
+package com.mrwang.stacklibrary;
 
 import android.support.v4.app.Fragment;
+
 import java.util.ArrayList;
 
 /**

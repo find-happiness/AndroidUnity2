@@ -9,12 +9,12 @@ import android.widget.Button;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import stacklibrary.RootFragment;
+import com.mrwang.stacklibrary.RootFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FirstFragment extends Fragment {
+public class FirstFragment extends RootFragment {
 
   @BindView(R.id.btn_next) Button btnNext;
 
@@ -32,9 +32,11 @@ public class FirstFragment extends Fragment {
 
   @OnClick(R.id.btn_next) public void onClick() {
 
-    Fragment to = ((UnityPlayerActivity) this.getActivity()).getSupportFragmentManager()
-        .findFragmentByTag(UnityPlayerFragment.class.getName());
+    //Fragment to = ((UnityPlayerActivity) this.getActivity()).getSupportFragmentManager()
+    //    .findFragmentByTag(UnityPlayerFragment.class.getName());
+    //
+    //((UnityPlayerActivity) this.getActivity()).switchContent(this, to);
 
-    ((UnityPlayerActivity) this.getActivity()).switchContent(this, to);
+    ((UnityPlayerActivity) this.getActivity()).switchUnity();
   }
 }

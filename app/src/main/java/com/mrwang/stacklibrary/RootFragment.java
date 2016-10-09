@@ -1,4 +1,4 @@
-package stacklibrary;
+package com.mrwang.stacklibrary;
 
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
